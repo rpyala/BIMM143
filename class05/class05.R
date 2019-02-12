@@ -2,7 +2,7 @@
 #' title: "Lecture 5 Lab Portion"
 #' author: "*Reshma Pyala*"
 #' date: "*January 24th, 2019*"
-#' output: pdf_document
+#' output: github_document
 #' ---
 
 #' This is some text and we can **bold**, *italic*, and `code` words so that it may appear like so in our document. 
