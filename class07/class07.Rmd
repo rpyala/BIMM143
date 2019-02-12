@@ -1,0 +1,115 @@
+---
+title: "Class 07"
+author: "Reshma Pyala"
+date: "1/29/2019"
+output:github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Functions revist
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Let's try the rescale() function out
+```{r}
+rescale(c(1, 5, 10))
+```
+Looking to see what the error message is for rescale()
+```{r}
+rescale(c(1:5, "string"))
+```
+
+
+Let's try **rescale2()** with the **stop()** function catch for non-numeric input
+```{r}
+rescale2(c(1:5, "string"))
+```
+Using code to find NA in the data given.
+```{r}
+x <- c(3, 7, NA, 4, 8, NA)
+is.na(x)
+which(is.na(x))
+```
+
+```{r}
+#Let's define an example x and y
+x <- c(1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+```
+
+```{r}
+is.na(x)
+sum(is.na(x))
+```
+
+```{r}
+is.na(x)
+is.na(y)
+is.na(x) & is.na(y)
+
+#Putting together!
+#sum(is.na(x) & is.na(y) - this tells you how many positions is it true for both x and y to have a NA
+
+sum(is.na(x) & is.na(y))
+```
+
+Take my working snippet and make our first function...
+```{r}
+# No further simplification necessary
+both_na <- function(x, y) {
+  sum( is.na(x) & is.na(y) )
+}
+```
+
+```{r}
+both_na(x, y)
+```
+
+```{r}
+#Trying with more variables to see if it works
+x <-  c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+
+y3 <- c(1, NA, NA, NA, NA)
+```
+
+```{r}
+both_na(x, y1)
+```
+
+```{r}
+# What will this return?
+both_na(x, y2)
+
+#Now trying it with y3, which has an extra value
+both_na(x, y3)
+```
+
+The reason that it is still reading a code above even when the second code is longer is because R recycles the script. So the first NA in x is recycles to the end of the code, which then makes it 4 characters long like y2. Then the NA and NA match up in position 4 which then gives us the reading of 3 matching NAs.
+This is the same with y3. It reads as 4 NAs matching because the first NA of x is recycles to match with the fourth and fifth characters from y3. 
+
+
+```{r}
+#Adding a function to both_na2 to give us more specific error to let us know what to fix.
+both_na2 <- function(x, y) {
+  if(length(x) != length(y)) {
+   stop("Input x and y should be the same length")
+}
+  sum( is.na(x) & is.na(y) )
+}
+```
+
+```{r}
+both_na2(x,y2)
+```
+
+```{r}
+#New code added as both_na3 to give us a more specific response
+both_na3(x, y1)
+```
+
