@@ -115,7 +115,6 @@ Q. Use the dist(), hclust(), plot() and cutree() functions to return 2 and 3 clu
 Q. How does this compare to your known 'col' groups?
 
 ```{r}
-kmeans()
 d <- dist(x)
 hc2 <- hclust(d)
 plot(hc2)
