@@ -1,0 +1,162 @@
+---
+title: "ckass 18"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(GenomicDataCommons)
+library(TCGAbiolinks)
+library(maftools)
+```
+
+##Hands on Section 1: Querying the GDC from R
+
+```{r}
+cases_by_project <- cases() %>%
+  facet("project.project_id") %>%
+  aggregations()
+head(cases_by_project)
+```
+
+Making a bar plot
+```{r}
+x <- cases_by_project$project.project_id
+head(x)
+
+colvec <- rep("lightblue", nrow(x))
+#colvec[] <- "red"
+
+barplot(x$doc_count, names.arg=x$key, las=2, log="y", col=colvec)
+```
+
+```{r}
+query <- GDCquery(project="TCGA-PAAD",
+                  data.category="Transcriptome Profiling",
+                  data.type="Gene Expression Quantification")
+
+ans <- getResults(query)
+
+head(ans)
+```
+
+```{r}
+View(ans)
+```
+```{r}
+nrow(ans)
+```
+
+```{r}
+maf.file <- GDCquery_Maf(tumor="PAAD", pipelines = "mutect")
+```
+```{r}
+head(maf.file)
+```
+
+```{r}
+vars = read.maf(maf = maf.file, verbose = FALSE)
+```
+```{r}
+plotmafSummary(vars)
+```
+```{r}
+oncoplot(maf = vars, top = 10)
+#not showing up on rstudio but it did save as a pdf in this class folder
+```
+
+```{r}
+# Oncoplot for our top 10 most frequently mutated genes
+pdf("oncoplot_panc.pdf")
+oncoplot(maf = vars, top = 10, fontSize = 12)
+dev.off()
+```
+
+```{r}
+oncostrip(maf=vars, genes=c("KRAS", "TP53"))
+```
+
+```{r}
+lollipopPlot(vars, gene='KRAS')
+```
+
+```{r}
+lollipopPlot(vars, gene='TP53')
+```
+
+
+
+
+
+
+
+##Hands on section 2:
+```{r}
+library(bio3d)
+seqs <- read.fasta("lecture18_sequences.fa")
+#seqs <- seqaln(seqs) already aligned so dont need really need this step
+seqs
+```
+
+```{r}
+## Calculate positional identity scores
+ide <- conserv(seqs$ali, method="identity")
+mutant.sites <- which(ide < 1) 
+
+## Exclude gap possitions from analysis
+gaps <- gap.inspect(seqs)
+mutant.sites <- mutant.sites[mutant.sites %in% gaps$f.inds]
+
+mutant.sites
+```
+
+```{r}
+## Make a "names" label for our output sequences (one per mutant)
+mutant.names <- paste0(seqs$ali["P53_wt",mutant.sites],
+                       mutant.sites,
+                       seqs$ali["P53_mutant",mutant.sites])
+
+mutant.names
+```
+
+```{r}
+## Sequence positions surounding each mutant site
+start.position <- mutant.sites - 8
+end.position <-  mutant.sites + 8
+
+# Blank matrix to store sub-sequences
+store.seqs <- matrix("-", nrow=length(mutant.sites), ncol=17)
+rownames(store.seqs) <- mutant.names
+
+## Extract each sub-sequence
+for(i in 1:length(mutant.sites)) {
+  store.seqs[i,] <- seqs$ali["P53_mutant",start.position[i]:end.position[i]]
+}
+
+store.seqs
+```
+
+```{r}
+## Output a FASTA file for further analysis
+write.fasta(seqs=store.seqs, ids=mutant.names, file="subsequences.fa")
+```
+
+```{r}
+library(bio3d)
+
+## Read KRas oncogene sequence from UniProt
+wt <- get.seq("P01116")
+
+## Here we make four mutants namely: G12V, Q22N, T74S and A130V
+mutant <- wt
+mutant$ali[ c(12,22,74,130)] <- c("V", "N", "S", "V")
+
+write.fasta( seqbind(wt, mutant), ids=c("wt","mutant"), file="kras-sequences.fa")
+```
+
+```{r}
+sessionInfo()
+```
