@@ -2,9 +2,10 @@
 
 This is a storage of my class-work for [BIMM143 Winter 2019](https://bioboot.github.io/bimm143_W19_rp/) at UCSD.
 
-##Contents  
--Class01 [Welcome to Bioinformatics]()
--Class02 [Sequence alignment fundamentals, algorithms and applications]()
+##Contents    
+
+- Class01 [Welcome to Bioinformatics]()
+- Class02 [Sequence alignment fundamentals, algorithms and applications]()
 -Class03 [Advanced sequence alignment and database searching]()
 -Class04 [Bioinformatics data analysis with R]()
 -Class05 [Data exploration and visualization in R](file:///Users/rpyala/Desktop/BIMM143_W19/bimm143_github/class05/class05.html)
